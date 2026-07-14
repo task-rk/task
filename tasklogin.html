@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Premium Earn App</title>
+    
+    <!-- SweetAlert2 CDN যোগ করা হয়েছে -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #7b2cbf, #5a189a); height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .login-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); padding: 40px; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); width: 300px; text-align: center; border: 1px solid rgba(255,255,255,0.2); }
+        h2 { color: white; margin-bottom: 25px; }
+        input { width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 15px; border: 2px solid #ccc; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background: #27ae60; border: none; border-radius: 15px; color: white; font-weight: bold; cursor: pointer; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 20px; border-radius: 20px; width: 280px; }
+        .modal-content input { border: 2px solid #ccc; outline: none; }
+        .modal-content input:focus { border-color: #f1c40f; }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <h2>Login</h2>
+        <input type="number" id="phone" placeholder="Phone Number">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">LOGIN NOW</button>
+        <div style="margin-top: 20px;">
+            <button onclick="openRegister()" style="background: transparent; border: 1px solid white;">Register</button>
+        </div>
+    </div>
+
+    <div id="regModal" class="modal">
+        <div class="modal-content">
+            <h3>Register</h3>
+            <input type="text" id="regName" placeholder="Name">
+            <input type="number" id="regPhone" placeholder="Phone Number">
+            <input type="password" id="regPass" placeholder="Password">
+            <input type="password" id="regConfirm" placeholder="Confirm Password">
+            <button onclick="register()">REGISTER</button>
+            <button onclick="closeRegister()" style="background:red; margin-top:5px;">Close</button>
+        </div>
+    </div>
+
+                <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+        const firebaseConfig = {
+            databaseURL: "https://amar-bazar-d99b4-default-rtdb.firebaseio.com"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // পেজ লোড হওয়ার সময় অটো-ফিল
+        window.onload = function() {
+            if(localStorage.getItem('userPhone') && localStorage.getItem('userPass')) {
+                document.getElementById('phone').value = localStorage.getItem('userPhone');
+                document.getElementById('password').value = localStorage.getItem('userPass');
+            }
+        };
+
+        window.openRegister = () => { document.getElementById('regModal').style.display = 'flex'; };
+        window.closeRegister = () => { document.getElementById('regModal').style.display = 'none'; };
+
+        window.register = async () => {
+            const name = document.getElementById('regName').value; // নাম সংগ্রহ
+            const phone = document.getElementById('regPhone').value;
+            const pass = document.getElementById('regPass').value;
+            const confirm = document.getElementById('regConfirm').value;
+
+            if(pass !== confirm) {
+                Swal.fire({ icon: 'error', title: 'Oops...', text: 'Passwords do not match!' });
+                return;
+            }
+
+            // Firebase-এ নাম, ব্যালেন্স এবং পাসওয়ার্ড সেট করা হচ্ছে
+            await set(ref(db, 'users/' + phone), {
+                name: name,
+                balance: 0,
+                password: pass
+            });
+
+            // লোকাল স্টোরেজে নাম, ফোন এবং পাসওয়ার্ড সেভ
+            localStorage.setItem('userName', name);
+            localStorage.setItem('userPhone', phone);
+            localStorage.setItem('userPass', pass);
+            
+            Swal.fire({ 
+                icon: 'success', 
+                title: 'Success!', 
+                text: 'Registration Successful!' 
+            }).then(() => {
+                closeRegister();
+                document.getElementById('phone').value = phone;
+                document.getElementById('password').value = pass;
+            });
+        };
+
+        window.login = () => {
+            const phone = document.getElementById('phone').value;
+            const pass = document.getElementById('password').value;
+
+            // ভেরিফিকেশন (লোকাল স্টোরেজ এর সাথে মিল আছে কি না)
+            if(phone === localStorage.getItem('userPhone') && pass === localStorage.getItem('userPass')) {
+                window.location.href = 'https://mdripon018770-coder.github.io/Notbok/task.html';
+            } else {
+                Swal.fire({ icon: 'error', title: 'Failed', text: 'Invalid phone or password!' });
+            }
+        };
+    </script>
+
+
+</body>
+</html>
