@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>টিকেট বুকিং</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+        .header { text-align: center; margin-bottom: 20px; color: #333; }
+        .ticket-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .ticket-card { background: white; padding: 20px; border-radius: 15px; text-align: center; 
+                       box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: transform 0.3s; cursor: pointer; }
+        .ticket-card:hover { transform: translateY(-5px); }
+        .ticket-card span { font-size: 40px; display: block; margin-bottom: 10px; }
+        .ticket-card p { font-weight: bold; color: #555; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h2>টিকেট বুক করুন</h2>
+</div>
+
+<div class="ticket-container">
+    <div class="ticket-card" onclick="bookTicket('প্লেন')"><span>✈️</span><p>প্লেন</p></div>
+    <div class="ticket-card" onclick="bookTicket('ট্রেন')"><span>🚆</span><p>ট্রেন</p></div>
+    <div class="ticket-card" onclick="bookTicket('বাস')"><span>🚌</span><p>বাস</p></div>
+    <div class="ticket-card" onclick="bookTicket('সিএনজি')"><span>🛺</span><p>সিএনজি</p></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function bookTicket(type) {
+        Swal.fire({
+            title: type + ' টিকেট বুকিং',
+            text: 'আপনি ' + type + ' টিকেট বুক করতে চাচ্ছেন। শীঘ্রই এটি চালু হবে!',
+            icon: 'info',
+            confirmButtonText: 'ঠিক আছে',
+            confirmButtonColor: '#3085d6'
+        });
+    }
+</script>
+
+</body>
+</html>
